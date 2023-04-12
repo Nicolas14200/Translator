@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ES6",
+        "outDir":"./dist",
+        "noEmitOnError": false,
+        "strict": true,
+       "moduleResolution":"nodenext",//'nodenext' for Node.js’ ECMAScript Module Support from TypeScript 4.7 onwards
+    },
+    "file":[
+        "src/index.ts"
+    ]
+}
