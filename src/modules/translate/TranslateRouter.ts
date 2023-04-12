@@ -1,29 +1,23 @@
 import * as deepl from "deepl-node";
 import { express, jwt } from "../../index";
-import {deepl_authKey, jwt_key} from '../../DotenvVar';
-
+import { deepl_authKey, jwt_key } from "../../DotenvVar";
+import { SentenceStat } from "../../interface";
+import { tokenGetMail } from "../../function";
 const translator: deepl.Translator = new deepl.Translator(deepl_authKey);
 
-interface SentenceStat {
-  textToTranslate: string;
-  lang: string;
-  sentence: string;
-}
 const sentenceArr: SentenceStat[] = [];
 const sentenceMap: Map<string, SentenceStat[]> = new Map();
 
 const TranslateRouter: express.Router = express.Router();
 
-//FUNCTION
-function tokenGetMail(token: string, jwt_key:string ): string {
-  const decoded = <jwt.JwtPayload>jwt.verify(token, jwt_key);
-  return decoded.user.email;
-}
 TranslateRouter.post(
   "/",
   async (req: express.Request, res: express.Response) => {
     try {
-      const mailActive = tokenGetMail(<string>req.headers["access_key"], jwt_key);
+      const mailActive = tokenGetMail(
+        <string>req.headers["access_key"],
+        jwt_key
+      );
 
       const textToTranslate: string = req.body.text;
       const langTo = req.body.lang;
@@ -70,8 +64,11 @@ TranslateRouter.get(
   }
 );
 TranslateRouter.get("/", (req: express.Request, res: express.Response) => {
-  const mailActive: string = tokenGetMail(<string>req.headers["access_key"],jwt_key);
-  const history   = <SentenceStat[]> sentenceMap.get(mailActive);
+  const mailActive: string = tokenGetMail(
+    <string>req.headers["access_key"],
+    jwt_key
+  );
+  const history = <SentenceStat[]>sentenceMap.get(mailActive);
   return res.status(200).send(history);
 });
 
