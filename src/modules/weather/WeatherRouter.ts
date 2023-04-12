@@ -1,10 +1,6 @@
-import {express, dotenv} from '../../index';
+import {express} from '../../index';
 import * as axios from 'axios';
-// .ENV
-const env  = dotenv.load({
-    WEATHER_KEY:String
-})
-const weather_key:string|undefined = env.WEATHER_KEY;
+import {weather_key} from '../../DotenvVar';
 const WeatherMap : Map<any, any> = new Map();
 // ENDPOINT
 const WeatherRouter : express.Router = express.Router();

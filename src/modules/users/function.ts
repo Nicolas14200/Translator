@@ -8,4 +8,8 @@ function whoIsToken(token : string, key: string) {
         return decoded;
     });
 };
-export {isEmail, whoIsToken};
+function tokenGetMail(token: string, jwt_key:string): string {
+    const decoded = <jwt.JwtPayload>jwt.verify(token, jwt_key);
+    return decoded.user.email;
+  }
+export {isEmail, whoIsToken, tokenGetMail};

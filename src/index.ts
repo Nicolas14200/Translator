@@ -1,18 +1,12 @@
 import * as express from 'express';
-import * as dotenv from 'ts-dotenv';
+import {port, jwt_key} from './DotenvVar';
 import * as jwt from 'jsonwebtoken';
 import {UserRouter} from './modules/users/UserRouter';
 import {WeatherRouter} from './modules/weather/WeatherRouter';
 import {TranslateRouter} from './modules/translate/TranslateRouter';
 
 const app : express.Application = express();
-// .ENV
-const env = dotenv.load({
-    PORT:String,
-    JWT_KEY:String
-})
-const port:string|undefined = env.PORT;
-const jwt_key:string|undefined = env.JWT_KEY;
+
 // ENDPOINT
 app.use(express.json());
 
@@ -40,4 +34,4 @@ app.listen( port, ():void => {
     console.log( `server started at http://localhost:${ port }` );
 });
 // EXPORT
-export {express, dotenv, jwt};
+export {express, jwt};

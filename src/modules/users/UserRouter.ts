@@ -1,11 +1,7 @@
-import {express, dotenv, jwt} from '../../index';
+import {express, jwt} from '../../index';
 import {isEmail} from './function';
 import {hash, compare} from './PassCrypt';
-// .ENV
-const env = dotenv.load({
-    JWT_KEY:String
-})
-const jwt_key:string = env.JWT_KEY;
+import { jwt_key} from '../../DotenvVar';
 
 interface User {
     email    : string;
@@ -77,7 +73,6 @@ UserRouter.post('/signin', async(req: express.Request,res: express.Response) => 
                 return res.status(400).send("email no valid");
             }
             const token = jwt.sign({ user }, jwt_key);
-            console.log(jwt.verify(token,jwt_key));
             return res.status(200).send({...user, token});
         })
     }else{
