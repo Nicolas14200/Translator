@@ -1,5 +1,5 @@
 import * as deepl from "deepl-node";
-import { express, jwt } from "../../index";
+import { express } from "../../index";
 import { deepl_authKey, jwt_key } from "../../DotenvVar";
 import { SentenceStat } from "../../interface";
 import { tokenGetMail } from "../../function";

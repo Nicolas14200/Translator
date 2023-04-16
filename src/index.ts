@@ -1,5 +1,5 @@
-import * as express from 'express';
 import {port, jwt_key} from './DotenvVar';
+import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import {UserRouter} from './modules/users/UserRouter';
 import {WeatherRouter} from './modules/weather/WeatherRouter';

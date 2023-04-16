@@ -8,5 +8,5 @@ interface SentenceStat {
     lang: string;
     sentence: string;
   }
-  export { User, SentenceStat };
+export { User, SentenceStat };
   
