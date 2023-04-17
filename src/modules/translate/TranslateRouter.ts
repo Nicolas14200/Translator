@@ -5,53 +5,63 @@ import { SentenceStat } from "../../interface";
 import { tokenGetMail } from "../../function";
 const translator: deepl.Translator = new deepl.Translator(deepl_authKey);
 
-const sentenceArr: SentenceStat[] = [];
+
 const sentenceMap: Map<string, SentenceStat[]> = new Map();
 
 const TranslateRouter: express.Router = express.Router();
-
+ 
 TranslateRouter.post(
+  ///////////////////// POST //////////////////
   "/",
   async (req: express.Request, res: express.Response) => {
     try {
-      const mailActive = tokenGetMail(
-        <string>req.headers["access_key"],
-        jwt_key
-      );
+      const sentenceArr: SentenceStat[] = []; //sentenceArr est une liste de SentenceStat
+      const emailReq = <string>req.headers["access_key"];
+      const mailActive = tokenGetMail(emailReq, jwt_key);
 
-      const textToTranslate: string = req.body.text;
+      const textToTranslateReq: string = req.body.text;
       const langTo = req.body.lang;
 
-      const targetSentence: SentenceStat[] | undefined =
+      const userexist: SentenceStat[] | undefined =
         sentenceMap.get(mailActive);
-      if (targetSentence) {
-        for (let i = 0; i < targetSentence.length; i++) {
-          if (targetSentence[i].textToTranslate === textToTranslate) {
-            console.log(sentenceMap);
-            return res.status(200).send(targetSentence);
+        console.log(userexist);
+      if (userexist) {
+        //user a t'il deja demander un truc ?
+        for (let i = 0; i < userexist.length; i++) {
+          //on boucle sur toute les phrases de l'utilisateur
+          if (userexist[i].textToTranslate === textToTranslateReq) {
+            //a t'il deja demander cette phrase ?
+            if (userexist[i].lang === langTo) {
+              //dans cette lang ?
+              return res.status(200).send(userexist);
+            }
           }
         }
       }
-      const result = await translator.translateText(
-        textToTranslate,
+      const resultTranslate = await translator.translateText(
+        //on traduit la phrase
+        textToTranslateReq,
         "fr",
         langTo
       );
-      const sentence: SentenceStat = {
-        textToTranslate: textToTranslate,
+      //console.log("result ===>",result)
+      const sentenceStat: SentenceStat = {
+        textToTranslate: textToTranslateReq,
         lang: langTo,
-        sentence: result.text,
+        sentence: resultTranslate.text,
       };
-      sentenceArr.push(sentence);
+      sentenceArr.push(sentenceStat);
       sentenceMap.set(mailActive, sentenceArr);
-      console.log(sentenceMap);
-      return res.status(200).send(result.text);
+
+      //console.log("sentenceMap======>",sentenceMap);
+      return res.status(200).send(resultTranslate.text);
     } catch (e) {
       return res.status(404).send(e);
     }
   }
 );
 TranslateRouter.get(
+  ////////////  AFFICHAGE DES LANGUES ////////////////////
   "/languages",
   async (req: express.Request, res: express.Response) => {
     const arrLang: string[] = [];
@@ -63,12 +73,16 @@ TranslateRouter.get(
     return res.status(200).send(arrLang);
   }
 );
+/////   HISTORIQUE   ////////////////////
 TranslateRouter.get("/", (req: express.Request, res: express.Response) => {
   const mailActive: string = tokenGetMail(
     <string>req.headers["access_key"],
     jwt_key
   );
+  console.log(sentenceMap);
   const history = <SentenceStat[]>sentenceMap.get(mailActive);
+  //console.log(mailActive);
+  //console.log(history);
   return res.status(200).send(history);
 });
 
